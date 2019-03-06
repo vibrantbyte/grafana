@@ -25,6 +25,10 @@ type UserToken struct {
 	UnhashedToken string
 }
 
+type RevokeAuthTokenCmd struct {
+	AuthTokenId int64 `json:"authTokenId"`
+}
+
 // UserTokenService are used for generating and validating user tokens
 type UserTokenService interface {
 	CreateToken(userId int64, clientIP, userAgent string) (*UserToken, error)

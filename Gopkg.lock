@@ -578,6 +578,14 @@
   revision = "771a37caa5cf0c81f585d7b6df4dfc77e0615b5c"
 
 [[projects]]
+  branch = "master"
+  digest = "1:67ecd7c858eeeae4866d1ff9b7ee22ca79d8d4b6432f7328f3c87684a71f1d34"
+  name = "github.com/ua-parser/uap-go"
+  packages = ["uaparser"]
+  pruneopts = "NUT"
+  revision = "1004ccd816b3064bcd9178bd9e9b684e4a4a942f"
+
+[[projects]]
   digest = "1:3d48c38e0eca8c66df62379c5ae7a83fb5cd839b94f241354c07ba077da7bc45"
   name = "github.com/uber/jaeger-client-go"
   packages = [
@@ -925,6 +933,7 @@
     "github.com/prometheus/common/model",
     "github.com/smartystreets/goconvey/convey",
     "github.com/teris-io/shortid",
+    "github.com/ua-parser/uap-go/uaparser",
     "github.com/uber/jaeger-client-go/config",
     "github.com/yudai/gojsondiff",
     "github.com/yudai/gojsondiff/formatter",
