@@ -7,6 +7,7 @@ import (
 
 	"github.com/grafana/grafana/pkg/bus"
 	m "github.com/grafana/grafana/pkg/models"
+	authtest "github.com/grafana/grafana/pkg/services/auth/testdata"
 	"github.com/grafana/grafana/pkg/setting"
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -36,7 +37,7 @@ func TestMiddlewareQuota(t *testing.T) {
 			},
 		}
 
-		fakeAuthTokenService := newFakeUserAuthTokenService()
+		fakeAuthTokenService := authtest.NewFakeUserAuthTokenService()
 		qs := &quota.QuotaService{
 			AuthTokenService: fakeAuthTokenService,
 		}
@@ -87,7 +88,7 @@ func TestMiddlewareQuota(t *testing.T) {
 				return nil
 			})
 
-			sc.userAuthTokenService.lookupTokenProvider = func(unhashedToken string) (*m.UserToken, error) {
+			sc.userAuthTokenService.LookupTokenProvider = func(unhashedToken string) (*m.UserToken, error) {
 				return &m.UserToken{
 					UserId:        12,
 					UnhashedToken: "",

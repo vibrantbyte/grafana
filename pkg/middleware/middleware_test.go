@@ -11,6 +11,7 @@ import (
 	msession "github.com/go-macaron/session"
 	"github.com/grafana/grafana/pkg/bus"
 	m "github.com/grafana/grafana/pkg/models"
+	authtest "github.com/grafana/grafana/pkg/services/auth/testdata"
 	"github.com/grafana/grafana/pkg/services/session"
 	"github.com/grafana/grafana/pkg/setting"
 	"github.com/grafana/grafana/pkg/util"
@@ -155,7 +156,7 @@ func TestMiddlewareContext(t *testing.T) {
 				return nil
 			})
 
-			sc.userAuthTokenService.lookupTokenProvider = func(unhashedToken string) (*m.UserToken, error) {
+			sc.userAuthTokenService.LookupTokenProvider = func(unhashedToken string) (*m.UserToken, error) {
 				return &m.UserToken{
 					UserId:        12,
 					UnhashedToken: unhashedToken,
@@ -184,14 +185,14 @@ func TestMiddlewareContext(t *testing.T) {
 				return nil
 			})
 
-			sc.userAuthTokenService.lookupTokenProvider = func(unhashedToken string) (*m.UserToken, error) {
+			sc.userAuthTokenService.LookupTokenProvider = func(unhashedToken string) (*m.UserToken, error) {
 				return &m.UserToken{
 					UserId:        12,
 					UnhashedToken: "",
 				}, nil
 			}
 
-			sc.userAuthTokenService.tryRotateTokenProvider = func(userToken *m.UserToken, clientIP, userAgent string) (bool, error) {
+			sc.userAuthTokenService.TryRotateTokenProvider = func(userToken *m.UserToken, clientIP, userAgent string) (bool, error) {
 				userToken.UnhashedToken = "rotated"
 				return true, nil
 			}
@@ -226,7 +227,7 @@ func TestMiddlewareContext(t *testing.T) {
 		middlewareScenario("Invalid/expired auth token in cookie", func(sc *scenarioContext) {
 			sc.withTokenSessionCookie("token")
 
-			sc.userAuthTokenService.lookupTokenProvider = func(unhashedToken string) (*m.UserToken, error) {
+			sc.userAuthTokenService.LookupTokenProvider = func(unhashedToken string) (*m.UserToken, error) {
 				return nil, m.ErrUserTokenNotFound
 			}
 
@@ -562,7 +563,7 @@ func middlewareScenario(desc string, fn scenarioFunc) {
 		}))
 
 		session.Init(&msession.Options{}, 0)
-		sc.userAuthTokenService = newFakeUserAuthTokenService()
+		sc.userAuthTokenService = authtest.NewFakeUserAuthTokenService()
 		sc.m.Use(GetContextHandler(sc.userAuthTokenService))
 		// mock out gc goroutine
 		session.StartSessionGC = func() {}
@@ -595,7 +596,7 @@ type scenarioContext struct {
 	handlerFunc          handlerFunc
 	defaultHandler       macaron.Handler
 	url                  string
-	userAuthTokenService *fakeUserAuthTokenService
+	userAuthTokenService *authtest.FakeUserAuthTokenService
 
 	req *http.Request
 }
@@ -676,81 +677,3 @@ func (sc *scenarioContext) exec() {
 
 type scenarioFunc func(c *scenarioContext)
 type handlerFunc func(c *m.ReqContext)
-
-type fakeUserAuthTokenService struct {
-	createTokenProvider         func(userId int64, clientIP, userAgent string) (*m.UserToken, error)
-	tryRotateTokenProvider      func(token *m.UserToken, clientIP, userAgent string) (bool, error)
-	lookupTokenProvider         func(unhashedToken string) (*m.UserToken, error)
-	revokeTokenProvider         func(token *m.UserToken) error
-	revokeAllUserTokensProvider func(userId int64) error
-	activeAuthTokenCount        func() (int64, error)
-	getUserTokenProvider        func(userId, userTokenId int64) (*m.UserToken, error)
-	getUserTokensProvider       func(userId int64) ([]*m.UserToken, error)
-}
-
-func newFakeUserAuthTokenService() *fakeUserAuthTokenService {
-	return &fakeUserAuthTokenService{
-		createTokenProvider: func(userId int64, clientIP, userAgent string) (*m.UserToken, error) {
-			return &m.UserToken{
-				UserId:        0,
-				UnhashedToken: "",
-			}, nil
-		},
-		tryRotateTokenProvider: func(token *m.UserToken, clientIP, userAgent string) (bool, error) {
-			return false, nil
-		},
-		lookupTokenProvider: func(unhashedToken string) (*m.UserToken, error) {
-			return &m.UserToken{
-				UserId:        0,
-				UnhashedToken: "",
-			}, nil
-		},
-		revokeTokenProvider: func(token *m.UserToken) error {
-			return nil
-		},
-		revokeAllUserTokensProvider: func(userId int64) error {
-			return nil
-		},
-		activeAuthTokenCount: func() (int64, error) {
-			return 10, nil
-		},
-		getUserTokenProvider: func(userId, userTokenId int64) (*m.UserToken, error) {
-			return nil, nil
-		},
-		getUserTokensProvider: func(userId int64) ([]*m.UserToken, error) {
-			return nil, nil
-		},
-	}
-}
-
-func (s *fakeUserAuthTokenService) CreateToken(userId int64, clientIP, userAgent string) (*m.UserToken, error) {
-	return s.createTokenProvider(userId, clientIP, userAgent)
-}
-
-func (s *fakeUserAuthTokenService) LookupToken(unhashedToken string) (*m.UserToken, error) {
-	return s.lookupTokenProvider(unhashedToken)
-}
-
-func (s *fakeUserAuthTokenService) TryRotateToken(token *m.UserToken, clientIP, userAgent string) (bool, error) {
-	return s.tryRotateTokenProvider(token, clientIP, userAgent)
-}
-
-func (s *fakeUserAuthTokenService) RevokeToken(token *m.UserToken) error {
-	return s.revokeTokenProvider(token)
-}
-
-func (s *fakeUserAuthTokenService) RevokeAllUserTokens(userId int64) error {
-	return s.revokeAllUserTokensProvider(userId)
-}
-
-func (s *fakeUserAuthTokenService) ActiveTokenCount() (int64, error) {
-	return s.activeAuthTokenCount()
-}
-
-func (s *fakeUserAuthTokenService) GetUserToken(userId, userTokenId int64) (*m.UserToken, error) {
-	return s.getUserTokenProvider(userId, userTokenId)
-}
-
-func (s *fakeUserAuthTokenService) GetUserTokens(userId int64) ([]*m.UserToken, error) {
-	return s.getUserTokensProvider(userId)
-}
