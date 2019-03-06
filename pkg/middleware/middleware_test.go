@@ -678,11 +678,14 @@ type scenarioFunc func(c *scenarioContext)
 type handlerFunc func(c *m.ReqContext)
 
 type fakeUserAuthTokenService struct {
-	createTokenProvider    func(userId int64, clientIP, userAgent string) (*m.UserToken, error)
-	tryRotateTokenProvider func(token *m.UserToken, clientIP, userAgent string) (bool, error)
-	lookupTokenProvider    func(unhashedToken string) (*m.UserToken, error)
-	revokeTokenProvider    func(token *m.UserToken) error
-	activeAuthTokenCount   func() (int64, error)
+	createTokenProvider         func(userId int64, clientIP, userAgent string) (*m.UserToken, error)
+	tryRotateTokenProvider      func(token *m.UserToken, clientIP, userAgent string) (bool, error)
+	lookupTokenProvider         func(unhashedToken string) (*m.UserToken, error)
+	revokeTokenProvider         func(token *m.UserToken) error
+	revokeAllUserTokensProvider func(userId int64) error
+	activeAuthTokenCount        func() (int64, error)
+	getUserTokenProvider        func(userId, userTokenId int64) (*m.UserToken, error)
+	getUserTokensProvider       func(userId int64) ([]*m.UserToken, error)
 }
 
 func newFakeUserAuthTokenService() *fakeUserAuthTokenService {
@@ -705,8 +708,17 @@ func newFakeUserAuthTokenService() *fakeUserAuthTokenService {
 		revokeTokenProvider: func(token *m.UserToken) error {
 			return nil
 		},
+		revokeAllUserTokensProvider: func(userId int64) error {
+			return nil
+		},
 		activeAuthTokenCount: func() (int64, error) {
 			return 10, nil
+		},
+		getUserTokenProvider: func(userId, userTokenId int64) (*m.UserToken, error) {
+			return nil, nil
+		},
+		getUserTokensProvider: func(userId int64) ([]*m.UserToken, error) {
+			return nil, nil
 		},
 	}
 }
@@ -727,6 +739,18 @@ func (s *fakeUserAuthTokenService) RevokeToken(token *m.UserToken) error {
 	return s.revokeTokenProvider(token)
 }
 
+func (s *fakeUserAuthTokenService) RevokeAllUserTokens(userId int64) error {
+	return s.revokeAllUserTokensProvider(userId)
+}
+
 func (s *fakeUserAuthTokenService) ActiveTokenCount() (int64, error) {
 	return s.activeAuthTokenCount()
+}
+
+func (s *fakeUserAuthTokenService) GetUserToken(userId, userTokenId int64) (*m.UserToken, error) {
+	return s.getUserTokenProvider(userId, userTokenId)
+}
+
+func (s *fakeUserAuthTokenService) GetUserTokens(userId int64) ([]*m.UserToken, error) {
+	return s.getUserTokensProvider(userId)
 }
