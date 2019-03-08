@@ -6,7 +6,7 @@ import (
 	"github.com/grafana/grafana/pkg/api/dtos"
 	"github.com/grafana/grafana/pkg/bus"
 	m "github.com/grafana/grafana/pkg/models"
-	authtest "github.com/grafana/grafana/pkg/services/auth/testdata"
+	"github.com/grafana/grafana/pkg/services/auth"
 
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -112,7 +112,7 @@ func adminLogoutUserScenario(desc string, url string, routePattern string, fn sc
 
 		hs := HTTPServer{
 			Bus:              bus.GetBus(),
-			AuthTokenService: authtest.NewFakeUserAuthTokenService(),
+			AuthTokenService: auth.NewFakeUserAuthTokenService(),
 		}
 
 		sc := setupScenarioContext(url)
@@ -135,7 +135,7 @@ func adminRevokeUserAuthTokenScenario(desc string, url string, routePattern stri
 	Convey(desc+" "+url, func() {
 		defer bus.ClearBusHandlers()
 
-		fakeAuthTokenService := authtest.NewFakeUserAuthTokenService()
+		fakeAuthTokenService := auth.NewFakeUserAuthTokenService()
 
 		hs := HTTPServer{
 			Bus:              bus.GetBus(),
@@ -163,7 +163,7 @@ func adminGetUserAuthTokensScenario(desc string, url string, routePattern string
 	Convey(desc+" "+url, func() {
 		defer bus.ClearBusHandlers()
 
-		fakeAuthTokenService := authtest.NewFakeUserAuthTokenService()
+		fakeAuthTokenService := auth.NewFakeUserAuthTokenService()
 
 		hs := HTTPServer{
 			Bus:              bus.GetBus(),

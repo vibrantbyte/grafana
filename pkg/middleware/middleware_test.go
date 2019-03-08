@@ -11,7 +11,7 @@ import (
 	msession "github.com/go-macaron/session"
 	"github.com/grafana/grafana/pkg/bus"
 	m "github.com/grafana/grafana/pkg/models"
-	authtest "github.com/grafana/grafana/pkg/services/auth/testdata"
+	"github.com/grafana/grafana/pkg/services/auth"
 	"github.com/grafana/grafana/pkg/services/session"
 	"github.com/grafana/grafana/pkg/setting"
 	"github.com/grafana/grafana/pkg/util"
@@ -563,7 +563,7 @@ func middlewareScenario(desc string, fn scenarioFunc) {
 		}))
 
 		session.Init(&msession.Options{}, 0)
-		sc.userAuthTokenService = authtest.NewFakeUserAuthTokenService()
+		sc.userAuthTokenService = auth.NewFakeUserAuthTokenService()
 		sc.m.Use(GetContextHandler(sc.userAuthTokenService))
 		// mock out gc goroutine
 		session.StartSessionGC = func() {}
@@ -596,7 +596,7 @@ type scenarioContext struct {
 	handlerFunc          handlerFunc
 	defaultHandler       macaron.Handler
 	url                  string
-	userAuthTokenService *authtest.FakeUserAuthTokenService
+	userAuthTokenService *auth.FakeUserAuthTokenService
 
 	req *http.Request
 }

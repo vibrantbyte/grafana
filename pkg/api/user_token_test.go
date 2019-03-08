@@ -6,7 +6,7 @@ import (
 
 	"github.com/grafana/grafana/pkg/bus"
 	m "github.com/grafana/grafana/pkg/models"
-	authtest "github.com/grafana/grafana/pkg/services/auth/testdata"
+	"github.com/grafana/grafana/pkg/services/auth"
 
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -162,7 +162,7 @@ func revokeUserAuthTokenScenario(desc string, url string, routePattern string, c
 	Convey(desc+" "+url, func() {
 		defer bus.ClearBusHandlers()
 
-		fakeAuthTokenService := authtest.NewFakeUserAuthTokenService()
+		fakeAuthTokenService := auth.NewFakeUserAuthTokenService()
 
 		hs := HTTPServer{
 			Bus:              bus.GetBus(),
@@ -190,7 +190,7 @@ func getUserAuthTokensScenario(desc string, url string, routePattern string, use
 	Convey(desc+" "+url, func() {
 		defer bus.ClearBusHandlers()
 
-		fakeAuthTokenService := authtest.NewFakeUserAuthTokenService()
+		fakeAuthTokenService := auth.NewFakeUserAuthTokenService()
 
 		hs := HTTPServer{
 			Bus:              bus.GetBus(),
@@ -220,7 +220,7 @@ func logoutUserFromAllDevicesInternalScenario(desc string, userId int64, fn scen
 
 		hs := HTTPServer{
 			Bus:              bus.GetBus(),
-			AuthTokenService: authtest.NewFakeUserAuthTokenService(),
+			AuthTokenService: auth.NewFakeUserAuthTokenService(),
 		}
 
 		sc := setupScenarioContext("/")
@@ -243,7 +243,7 @@ func revokeUserAuthTokenInternalScenario(desc string, cmd m.RevokeAuthTokenCmd, 
 	Convey(desc, func() {
 		defer bus.ClearBusHandlers()
 
-		fakeAuthTokenService := authtest.NewFakeUserAuthTokenService()
+		fakeAuthTokenService := auth.NewFakeUserAuthTokenService()
 
 		hs := HTTPServer{
 			Bus:              bus.GetBus(),
@@ -272,7 +272,7 @@ func getUserAuthTokensInternalScenario(desc string, token *m.UserToken, fn scena
 	Convey(desc, func() {
 		defer bus.ClearBusHandlers()
 
-		fakeAuthTokenService := authtest.NewFakeUserAuthTokenService()
+		fakeAuthTokenService := auth.NewFakeUserAuthTokenService()
 
 		hs := HTTPServer{
 			Bus:              bus.GetBus(),

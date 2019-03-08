@@ -3,11 +3,11 @@ package middleware
 import (
 	"testing"
 
+	"github.com/grafana/grafana/pkg/services/auth"
 	"github.com/grafana/grafana/pkg/services/quota"
 
 	"github.com/grafana/grafana/pkg/bus"
 	m "github.com/grafana/grafana/pkg/models"
-	authtest "github.com/grafana/grafana/pkg/services/auth/testdata"
 	"github.com/grafana/grafana/pkg/setting"
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -37,7 +37,7 @@ func TestMiddlewareQuota(t *testing.T) {
 			},
 		}
 
-		fakeAuthTokenService := authtest.NewFakeUserAuthTokenService()
+		fakeAuthTokenService := auth.NewFakeUserAuthTokenService()
 		qs := &quota.QuotaService{
 			AuthTokenService: fakeAuthTokenService,
 		}

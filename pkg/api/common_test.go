@@ -8,7 +8,7 @@ import (
 	"github.com/grafana/grafana/pkg/bus"
 	"github.com/grafana/grafana/pkg/middleware"
 	m "github.com/grafana/grafana/pkg/models"
-	authtest "github.com/grafana/grafana/pkg/services/auth/testdata"
+	"github.com/grafana/grafana/pkg/services/auth"
 	"gopkg.in/macaron.v1"
 
 	. "github.com/smartystreets/goconvey/convey"
@@ -102,7 +102,7 @@ type scenarioContext struct {
 	defaultHandler       macaron.Handler
 	req                  *http.Request
 	url                  string
-	userAuthTokenService *authtest.FakeUserAuthTokenService
+	userAuthTokenService *auth.FakeUserAuthTokenService
 }
 
 func (sc *scenarioContext) exec() {

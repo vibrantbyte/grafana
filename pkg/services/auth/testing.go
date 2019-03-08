@@ -1,4 +1,4 @@
-package testdata
+package auth
 
 import "github.com/grafana/grafana/pkg/models"
 
