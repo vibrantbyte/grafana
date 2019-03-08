@@ -505,9 +505,7 @@ Content-Type: application/json
     "id": 361,
     "isActive": true,
     "clientIp": "127.0.0.1",
-    "device": "Other",
-    "os": "Linux",
-    "browser": "Chrome",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36",
     "createdAt": "2019-03-05T21:22:54+01:00",
     "seenAt": "2019-03-06T19:41:06+01:00"
   },
@@ -515,9 +513,7 @@ Content-Type: application/json
     "id": 364,
     "isActive": false,
     "clientIp": "127.0.0.1",
-    "device": "iPhone",
-    "os": "iOS",
-    "browser": "Mobile Safari",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1",
     "createdAt": "2019-03-06T19:41:19+01:00",
     "seenAt": "2019-03-06T19:41:21+01:00"
   }

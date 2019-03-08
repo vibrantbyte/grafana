@@ -7,7 +7,6 @@ import (
 	"github.com/grafana/grafana/pkg/bus"
 	"github.com/grafana/grafana/pkg/models"
 	"github.com/grafana/grafana/pkg/util"
-	"github.com/ua-parser/uap-go/uaparser"
 )
 
 // GET /api/user/auth-tokens
@@ -62,18 +61,13 @@ func (server *HTTPServer) getUserAuthTokensInternal(c *models.ReqContext, userID
 			isActive = true
 		}
 
-		parser := uaparser.NewFromSaved()
-		client := parser.Parse(token.UserAgent)
-
 		result = append(result, &dtos.UserToken{
-			Id:              token.Id,
-			IsActive:        isActive,
-			ClientIp:        token.ClientIp,
-			Device:          client.Device.ToString(),
-			OperatingSystem: client.Os.Family,
-			Browser:         client.UserAgent.Family,
-			CreatedAt:       time.Unix(token.CreatedAt, 0),
-			SeenAt:          time.Unix(token.SeenAt, 0),
+			Id:        token.Id,
+			IsActive:  isActive,
+			ClientIp:  token.ClientIp,
+			UserAgent: token.UserAgent,
+			CreatedAt: time.Unix(token.CreatedAt, 0),
+			SeenAt:    time.Unix(token.SeenAt, 0),
 		})
 	}
 
