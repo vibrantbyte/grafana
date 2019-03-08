@@ -262,11 +262,11 @@ func (s *UserAuthTokenService) GetUserTokens(userId int64) ([]*models.UserToken,
 		return nil, err
 	}
 
-	result := make([]*models.UserToken, len(tokens))
-	for k, v := range tokens {
+	result := []*models.UserToken{}
+	for _, token := range tokens {
 		var userToken models.UserToken
-		v.toUserToken(&userToken)
-		result[k] = &userToken
+		token.toUserToken(&userToken)
+		result = append(result, &userToken)
 	}
 
 	return result, nil

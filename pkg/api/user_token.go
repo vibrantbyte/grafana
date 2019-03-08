@@ -55,26 +55,26 @@ func (server *HTTPServer) getUserAuthTokensInternal(c *models.ReqContext, userID
 		return Error(500, "Failed to get user auth tokens", err)
 	}
 
-	result := make([]*dtos.UserToken, len(tokens))
-	for k, v := range tokens {
+	result := []*dtos.UserToken{}
+	for _, token := range tokens {
 		isActive := false
-		if c.UserToken != nil && c.UserToken.Id == v.Id {
+		if c.UserToken != nil && c.UserToken.Id == token.Id {
 			isActive = true
 		}
 
 		parser := uaparser.NewFromSaved()
-		client := parser.Parse(v.UserAgent)
+		client := parser.Parse(token.UserAgent)
 
-		result[k] = &dtos.UserToken{
-			Id:              v.Id,
+		result = append(result, &dtos.UserToken{
+			Id:              token.Id,
 			IsActive:        isActive,
-			ClientIp:        v.ClientIp,
+			ClientIp:        token.ClientIp,
 			Device:          client.Device.ToString(),
 			OperatingSystem: client.Os.Family,
 			Browser:         client.UserAgent.Family,
-			CreatedAt:       time.Unix(v.CreatedAt, 0),
-			SeenAt:          time.Unix(v.SeenAt, 0),
-		}
+			CreatedAt:       time.Unix(token.CreatedAt, 0),
+			SeenAt:          time.Unix(token.SeenAt, 0),
+		})
 	}
 
 	return JSON(200, result)
